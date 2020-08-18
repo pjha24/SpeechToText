@@ -11,7 +11,6 @@ class Speech
       
       # The raw audio
       audio_file = File.binread file_name
-
       # The audio file's encoding and sample rate
       config = { encoding:          :LINEAR16,
                 #sample_rate_hertz: 48_000,
@@ -23,10 +22,13 @@ class Speech
 
       results = response.results
 
+
       # Get first result because we only processed a single audio file
       # Each result represents a consecutive portion of the audio
+      @translation = "Transcription: "
       results.first.alternatives.each do |alternatives|
-        puts "Transcription: #{alternatives.transcript}"
+        @translation.concat("#{alternatives.transcript}")
       end
+      return @translation
   end
 end

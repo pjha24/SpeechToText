@@ -56,3 +56,4 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 #google speech to text
 gem 'google-cloud-speech', '~> 1.1', '>= 1.1.1'
 gem 'nokogiri', '~> 1.6', '>= 1.6.8'
+gem 'jquery-rails', '~> 4.3', '>= 4.3.1'

@@ -112,7 +112,24 @@ function stopRecording() {
 	gumStream.getAudioTracks()[0].stop();
 
 	//create the wav blob and pass it on to createDownloadLink
-	return rec.exportWAV(createDownloadLink);
+	rec.exportWAV(sendWaveToPost);
+}
+function sendWaveToPost(blob) {
+	alert('in');
+	var data = new FormData();
+
+	data.append("audio", blob, (new Date()).getTime() + ".wav");
+
+	var oReq = new XMLHttpRequest();
+	oReq.open("POST", "/static/translate");
+	oReq.send(data);
+	oReq.onload = function(oEvent) {
+		if (oReq.status == 200) {
+			console.log("Uploaded");
+		} else {
+			console.log("Error " + oReq.status + " occurred uploading your file.");
+		}
+	};
 }
 
 function createDownloadLink(blob) {

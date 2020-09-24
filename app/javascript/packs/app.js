@@ -112,13 +112,26 @@ function stopRecording() {
 	gumStream.getAudioTracks()[0].stop();
 
 	//create the wav blob and pass it on to createDownloadLink
-	rec.exportWAV(sendWaveToPost);
+	rec.exportWAV(createDownloadLink);
 }
 function sendWaveToPost(blob) {
-	alert('in');
-	var data = new FormData();
-
-	data.append("audio", blob, (new Date()).getTime() + ".wav");
+	var url = URL.createObjectURL(blob);
+	var au = document.createElement('audio');
+	au.src = url;
+	//var data = new FormData();
+	var reader  = new window.FileReader();
+     reader.readAsDataURL(blob); 
+     reader.onloadend = function() {
+        var base64data = reader.result;
+	 
+		$.post("static/translate",{audio: base64data})
+			//.done(function (data, status){
+			//	$("#test").html(data);
+				//alert(status);
+		//	});
+		}	
+	};
+	/*data.append("audio", url);
 
 	var oReq = new XMLHttpRequest();
 	oReq.open("POST", "/static/translate");
@@ -129,27 +142,46 @@ function sendWaveToPost(blob) {
 		} else {
 			console.log("Error " + oReq.status + " occurred uploading your file.");
 		}
-	};
-}
+	};*/
+
 
 function createDownloadLink(blob) {
+	
 	
 	var url = URL.createObjectURL(blob);
 	var au = document.createElement('audio');
 	var li = document.createElement('li');
 	var link = document.createElement('a');
+	
 
 	//name of .wav file to use during upload and download (without extendion)
 	var filename = new Date().toISOString();
+
+    var data = new FormData();
+
+    data.append("audio", blob, (filename + ".wav"));
+
+            var oReq = new XMLHttpRequest();
+            oReq.open("POST", "/static/save_file");
+            oReq.send(data);
+            oReq.onload = function(oEvent) {
+                if (oReq.status == 200) {
+                    console.log("Uploaded");
+                } else {
+                    console.log("Error " + oReq.status + " occurred uploading your file.");
+                }
+            };
+
+
 
 	//add controls to the <audio> element
 	au.controls = true;
 	au.src = url;
 
 	//save to disk link
-	link.href = url;
-	link.download = filename+".wav"; //download forces the browser to donwload the file using the  filename
-	link.innerHTML = "Save to disk";
+	//link.href = url;
+	//link.download = filename+".wav"; //download forces the browser to donwload the file using the  filename
+	//link.innerHTML = "Save to disk";
 
 	//add the new audio element to li
 	li.appendChild(au);
@@ -158,10 +190,10 @@ function createDownloadLink(blob) {
 	li.appendChild(document.createTextNode(filename+".wav "))
 
 	//add the save to disk link to li
-	li.appendChild(link);
+	//li.appendChild(link);
 	
 	//upload link
-	var upload = document.createElement('a');
+	/*var upload = document.createElement('a');
 	upload.href="#";
 	upload.innerHTML = "Upload";
 	upload.addEventListener("click", function(event){
@@ -175,9 +207,9 @@ function createDownloadLink(blob) {
 		  fd.append("audio_data",blob, filename);
 		  xhr.open("POST","upload.php",true);
 		  xhr.send(fd);
-	})
+	})*/
 	li.appendChild(document.createTextNode (" "))//add a space in between
-	li.appendChild(upload)//add the upload link to li
+	//li.appendChild(upload)//add the upload link to li
 
 	//add the li element to the ol
 	recordingsList.appendChild(li);

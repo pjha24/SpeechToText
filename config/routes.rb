@@ -3,4 +3,5 @@ Rails.application.routes.draw do
   root to: 'static#index'
   post 'static/translate'
   get 'static/translate'
+  post 'static/save_file'
 end
